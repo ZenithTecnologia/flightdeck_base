@@ -1,9 +1,9 @@
 ---
 - name: Create groups.
   shell: >
-    addgroup
+    groupadd
     {% if item.gid | default(false) %}-g {{ item.gid | int }}{% endif %}
-    {% if item.system | default(false) %}-S{% endif %}
+    {% if item.system | default(false) %}-r{% endif %}
     {{ item.name }}
   loop: "{{ flightdeck_groups }}"
 
@@ -11,7 +11,8 @@
   shell: >
     adduser -G {{ item.group | default(item.name) }}
     -D
-    -h {{ item.home | default('/home/' + item.name) }}
+    -m
+    -d {{ item.home | default('/home/' + item.name) }}
     -s {{ item.shell | default('/bin/bash') }}
     {% if item.uid | default(false) %}-u {{ item.uid | int }}{% endif %}
     {% if item.system | default(false) %}-S{% endif %}
