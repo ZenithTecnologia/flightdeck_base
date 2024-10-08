@@ -30,13 +30,13 @@
   loop: "{{ flightdeck_users }}"
 
 - name: Install base utlities.
-  apk:
+  dnf:
     name: "{{ item }}"
     state: present
     update_cache: yes
   loop: "{{ flightdeck_base_packages }}"
   notify:
-    - clear apk cache
+    - clear dnf cache
 
 - name: Deploy key scripts.
   template:
