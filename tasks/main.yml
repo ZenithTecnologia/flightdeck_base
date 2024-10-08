@@ -9,8 +9,10 @@
 
 - name: Create the container users.
   shell: >
-    adduser -G {{ item.group | default(item.name) }}
-    -D
+    {% if item.group == item.name %} groupdel {{ item.group }} || true ; {% endif %}
+    adduser
+    {% if item.group == item.name %}-U{% endif %}
+    {% if item.group != item.name %}-G{{ item.group }} {% endif %}
     -m
     -d {{ item.home | default('/home/' + item.name) }}
     -s {{ item.shell | default('/bin/bash') }}
@@ -22,7 +24,7 @@
 - name: Add users to secondary groups.
   shell: >
     {% for _group in item.groups | default([]) %}
-    addgroup {{ item.name }} {{ _group }} &&
+    gpasswd -a {{ item.name }} {{ _group }} &&
     {% endfor %}
     true
   loop: "{{ flightdeck_users }}"
